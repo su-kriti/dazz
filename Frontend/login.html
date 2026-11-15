@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAZZ - Login / Sign Up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .auth-wrapper {
+      min-height: calc(100vh - 80px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .auth-card {
+      background: #ffffff;
+      color: #1a163a;
+      width: 100%;
+      max-width: 440px;
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    }
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #f1f3f9;
+      padding: 4px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+    }
+    .auth-tab-btn {
+      border: none;
+      background: transparent;
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #636b83;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .auth-tab-btn.active {
+      background: #ffffff;
+      color: #4b36d6;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .input-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #3b415a;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .input-field {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid #dcdfe8;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      margin-bottom: 16px;
+    }
+    .input-field:focus {
+      border-color: #4b36d6;
+    }
+    .btn-submit {
+      width: 100%;
+      background: #4b36d6;
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover {
+      background: #3924c2;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Minimal Nav -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="home.html" style="text-decoration: none;" class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-sparkles"></i></div>
+        <span class="brand-text">DAZZ</span>
+      </a>
+      <a href="home.html" class="nav-item">Back to Home</a>
+    </div>
+  </header>
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button id="tabLogin" class="auth-tab-btn active" onclick="switchAuthTab('login')">Sign In</button>
+        <button id="tabSignup" class="auth-tab-btn" onclick="switchAuthTab('signup')">Sign Up</button>
+      </div>
+
+      <!-- Alerts -->
+      <div id="authAlert" class="alert-box d-none" style="margin-bottom: 16px;"></div>
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div>
+          <label class="input-label">Email Address</label>
+          <input type="email" id="loginEmail" class="input-field" placeholder="student@sau.int" required>
+        </div>
+        <div>
+          <label class="input-label">Password</label>
+          <input type="password" id="loginPassword" class="input-field" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-submit">Sign In to DAZZ</button>
+      </form>
+
+      <!-- SIGNUP FORM -->
+      <form id="signupForm" class="d-none" onsubmit="handleSignup(event)">
+        <div>
+          <label class="input-label">Full Name</label>
+          <input type="text" id="signupName" class="input-field" placeholder="Sukriti Kumari" required>
+        </div>
+        <div>
+          <label class="input-label">Email Address</label>
+          <input type="email" id="signupEmail" class="input-field" placeholder="student@sau.int" required>
+        </div>
+        <div>
+          <label class="input-label">Password</label>
+          <input type="password" id="signupPassword" class="input-field" placeholder="Create a password" required>
+        </div>
+        <div>
+          <label class="input-label">Account Role</label>
+          <select id="signupRole" class="input-field">
+            <option value="Student" selected>Student</option>
+            <option value="Organiser">Organiser</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-submit">Create Account</button>
+      </form>
+
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAZZ - Publish Upcoming Event</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .form-container {
+      max-width: 860px;
+      margin: 40px auto 80px auto;
+      padding: 0 20px;
+    }
+    .form-card {
+      background: #ffffff;
+      color: #171530;
+      border-radius: 18px;
+      padding: 36px 40px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+    }
+    .form-section-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #1b173e;
+      border-bottom: 2px solid #edf0f7;
+      padding-bottom: 8px;
+      margin: 28px 0 18px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-section-title:first-of-type {
+      margin-top: 0;
+    }
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+    .form-row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .form-label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #4b526d;
+      margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid #dcdfe8;
+      border-radius: 9px;
+      font-size: 13.5px;
+      color: #1f2438;
+      background: #f8f9fd;
+      outline: none;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .form-control:focus {
+      border-color: #4b36d6;
+      background: #ffffff;
+    }
+    .checkbox-pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .pill-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f1f3f9;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+    .pill-checkbox input {
+      accent-color: #4b36d6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="home.html" class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
+        <span class="brand-text">DAZZ</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="home.html" class="nav-item">Home</a>
+        <a href="events.html" class="nav-item">Upcoming Events</a>
+        <a href="dashboard.html" class="nav-item">Dashboard</a>
+      </nav>
+
+      <div class="nav-action" id="navAuthArea">
+        <a href="dashboard.html" class="btn-primary-pill">Back to Dashboard</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="form-container">
+    <div style="margin-bottom: 24px;">
+      <h1 style="font-size: 30px; font-weight: 800; margin-bottom: 6px;">Publish New Upcoming Event</h1>
+      <p style="color: #c9c4eb; font-size: 14px;">Define event parameters, eligibility criteria, schedule, and venue allocation.</p>
+    </div>
+
+    <div class="form-card">
+      <div id="publishAlert" class="alert-box d-none" style="margin-bottom: 20px;"></div>
+
+      <form id="createEventForm" onsubmit="handleEventPublish(event)">
+        
+        <!-- SECTION 1: Event Identity -->
+        <div class="form-section-title">
+          <i class="fa-solid fa-bullhorn" style="color: #4b36d6;"></i> 1. Event Profile & Categorization
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label class="form-label">Event Title *</label>
+          <input type="text" id="evTitle" class="form-control" placeholder="e.g. HackDAZZ 2026: Inter-College Hackathon" required>
+        </div>
+
+        <div class="form-row-2">
+          <div>
+            <label class="form-label">Category *</label>
+            <select id="evCategory" class="form-control" required>
+              <option value="Technical" selected>Technical</option>
+              <option value="Cultural">Cultural</option>
+              <option value="Sports">Sports</option>
+              <option value="Workshop">Workshop</option>
+              <option value="Hackathon">Hackathon</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label">Participation Scope *</label>
+            <select id="evScope" class="form-control" required>
+              <option value="Inter" selected>Inter-College (Open to all institutions)</option>
+              <option value="Intra">Intra-College (Restricted to host institution)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label class="form-label">Detailed Description & Rules</label>
+          <textarea id="evDescription" class="form-control" style="height: 90px; resize: vertical;" placeholder="Outline the competition structure, guidelines, judging criteria, and rewards..."></textarea>
+        </div>
+
+        <!-- SECTION 2: Schedule & Venue -->
+        <div class="form-section-title">
+          <i class="fa-solid fa-clock" style="color: #4b36d6;"></i> 2. Schedule & Venue Collision Safety
+        </div>
+
+        <div class="form-row-2">
+          <div>
+            <label class="form-label">Start Date & Time *</label>
+            <input type="datetime-local" id="evStartDate" class="form-control" required onchange="handleStartDateChange()">
+          </div>
+
+          <div>
+            <label class="form-label">End Date & Time *</label>
+            <input type="datetime-local" id="evEndDate" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div>
+            <label class="form-label">Location Type *</label>
+            <select id="evLocationType" class="form-control" onchange="toggleVenueFields()" required>
+              <option value="OnCampus" selected>On-Campus</option>
+              <option value="OffCampus">Off-Campus</option>
+              <option value="Online">Online / Virtual</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label" id="labelVenue">Auditorium / Hall / Venue *</label>
+            <input type="text" id="evVenue" class="form-control" placeholder="e.g. Main Auditorium, Ground Floor" required>
+          </div>
+
+          <div>
+            <label class="form-label">City *</label>
+            <select id="evCity" class="form-control" required>
+              <option value="Delhi" selected>Delhi</option>
+              <option value="Patna">Patna</option>
+              <option value="Hyderabad">Hyderabad</option>
+              <option value="Bengaluru">Bengaluru</option>
+              <option value="Mumbai">Mumbai</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- SECTION 3: Participation Format, Quotas & Tickets -->
+        <div class="form-section-title">
+          <i class="fa-solid fa-users-gear" style="color: #4b36d6;"></i> 3. Participation Format, Capacity & Pricing
+        </div>
+
+        <div class="form-row-3">
+          <div>
+            <label class="form-label">Participation Mode *</label>
+            <select id="evMode" class="form-control" onchange="toggleTeamSizeInputs()" required>
+              <option value="Solo" selected>Solo (Individual)</option>
+              <option value="Team">Team-Based</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label">Min Team Members</label>
+            <input type="number" id="evMinTeam" class="form-control" value="1" min="1" max="10" disabled>
+          </div>
+
+          <div>
+            <label class="form-label">Max Team Members</label>
+            <input type="number" id="evMaxTeam" class="form-control" value="1" min="1" max="10" disabled>
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div>
+            <label class="form-label">Maximum Attendee Quota *</label>
+            <input type="number" id="evMaxSeats" class="form-control" value="100" min="10" max="5000" required>
+          </div>
+
+          <div>
+            <label class="form-label">Ticketing Structure *</label>
+            <select id="evPaidSelect" class="form-control" onchange="togglePriceInput()" required>
+              <option value="Free" selected>Free Entry</option>
+              <option value="Paid">Paid Registration</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label">Entry Fee (INR)</label>
+            <input type="number" id="evPrice" class="form-control" value="0" min="0" step="10" disabled>
+          </div>
+        </div>
+
+        <!-- SECTION 4: Degree Prerequisites -->
+        <div class="form-section-title">
+          <i class="fa-solid fa-graduation-cap" style="color: #4b36d6;"></i> 4. Degree Prerequisites (Leave unselected for all)
+        </div>
+
+        <div class="checkbox-pill-group">
+          <label class="pill-checkbox"><input type="checkbox" name="degOption" value="MCA"> MCA</label>
+          <label class="pill-checkbox"><input type="checkbox" name="degOption" value="B.Tech"> B.Tech</label>
+          <label class="pill-checkbox"><input type="checkbox" name="degOption" value="M.Tech"> M.Tech</label>
+          <label class="pill-checkbox"><input type="checkbox" name="degOption" value="BSc Computer Science"> BSc Computer Science</label>
+          <label class="pill-checkbox"><input type="checkbox" name="degOption" value="MBA"> MBA</label>
+          <label class="pill-checkbox"><input type="checkbox" name="degOption" value="MA International Relations"> MA International Relations</label>
+        </div>
+
+        <div style="margin-top: 32px; display: flex; gap: 14px; justify-content: flex-end;">
+          <a href="dashboard.html" class="btn-secondary" style="text-decoration: none; padding: 12px 24px;">Cancel</a>
+          <button type="submit" id="btnSubmitPublish" class="btn-primary-pill" style="padding: 12px 28px;">
+            Publish Event Immediately
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 DAZZ. All rights reserved.</p>
+  </footer>
+
+  <script src="create-event.js"></script>
+</body>
+</html>

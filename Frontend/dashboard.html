@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAZZ - Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .dashboard-container {
+      max-width: 1100px;
+      margin: 40px auto 80px auto;
+      padding: 0 24px;
+    }
+    .panel-card {
+      background: #ffffff;
+      color: #171530;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      margin-bottom: 28px;
+    }
+    .org-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 13.5px;
+    }
+    .org-table th {
+      text-align: left;
+      padding: 12px 14px;
+      background: #f4f5fa;
+      color: #4f556d;
+      font-weight: 700;
+      border-bottom: 2px solid #e2e5f1;
+    }
+    .org-table td {
+      padding: 14px;
+      border-bottom: 1px solid #edf0f7;
+      color: #2b3044;
+    }
+    .ticket-grid {
+      display: grid;
+      gap: 20px;
+      margin-top: 24px;
+    }
+    .ticket-card {
+      background: #ffffff;
+      color: #1a163a;
+      border-radius: 16px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+      display: grid;
+      grid-template-columns: 1fr 240px;
+      overflow: hidden;
+      border: 1px solid #edf0f7;
+    }
+    .ticket-main {
+      padding: 24px 28px;
+    }
+    .ticket-stub {
+      background: #f8f9fd;
+      border-left: 2px dashed #dcdfe8;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .ticket-code-pill {
+      background: #4b36d6;
+      color: #ffffff;
+      font-family: monospace;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 8px;
+      letter-spacing: 1px;
+      margin-top: 8px;
+    }
+    .status-badge-confirmed {
+      background: #e6f9ed;
+      color: #15733e;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    .scanner-box {
+      background: #f8f9fd;
+      border: 2px dashed #4b36d6;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 14px;
+    }
+    .scanner-input {
+      flex: 1;
+      padding: 11px 16px;
+      border: 1px solid #dcdfe8;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 15px;
+      font-weight: 700;
+      outline: none;
+    }
+    .action-button-group {
+      display: flex;
+      gap: 12px;
+    }
+    .badge-verified, .badge-status-approved {
+      background: #e6f9ed;
+      color: #15733e;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .badge-pending, .badge-status-pending {
+      background: #fff8e1;
+      color: #b45309;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .badge-status-rejected {
+      background: #fee2e2;
+      color: #b91c1c;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="home.html" class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
+        <span class="brand-text">DAZZ</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="home.html" class="nav-item">Home</a>
+        <a href="events.html" class="nav-item">Upcoming Events</a>
+        <a href="dashboard.html" class="nav-item active">Dashboard</a>
+      </nav>
+
+      <div class="nav-action" id="navAuthArea">
+        <a href="home.html" class="btn-primary-pill">Home</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-container">
+    
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 16px; margin-bottom: 28px;">
+      <div>
+        <h1 style="font-size: 30px; font-weight: 800; margin-bottom: 4px;" id="dashboardTitle">Dashboard</h1>
+        <p style="color: #c9c4eb; font-size: 14.5px;" id="dashboardSubtitle">Manage records and permissions.</p>
+      </div>
+      <div id="userProfileHeader" style="color: #ffffff; font-size: 13.5px; text-align: right;"></div>
+    </div>
+
+    <!-- 1. INSTITUTION ADMIN VIEW -->
+    <div id="adminDashboardView" class="d-none">
+      <div id="adminAlert" class="alert-box d-none" style="margin-bottom: 16px;"></div>
+
+      <div class="panel-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <div>
+            <h2 style="font-size: 18px; font-weight: 800; color: #171530;">Pending Organiser Verification Requests</h2>
+            <p style="color: #6a6f87; font-size: 13px;">Review and authenticate society leads from your college.</p>
+          </div>
+          <button class="btn-secondary" onclick="loadPendingOrganisers()" style="font-size: 12px; padding: 8px 16px;">Refresh</button>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="org-table">
+            <thead>
+              <tr>
+                <th>Coordinator Name</th>
+                <th>Email</th>
+                <th>Club / Society</th>
+                <th>Designation</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="pendingOrganisersTbody">
+              <tr><td colspan="5" style="text-align: center; color: #797e93; padding: 24px;">Checking for verification requests...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <div>
+            <h2 style="font-size: 18px; font-weight: 800; color: #171530;">Pending Event Approval Requests</h2>
+            <p style="color: #6a6f87; font-size: 13px;">Review submitted events before they are broadcasted publicly across DAZZ.</p>
+          </div>
+          <button class="btn-secondary" onclick="loadPendingEvents()" style="font-size: 12px; padding: 8px 16px;">Refresh</button>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="org-table">
+            <thead>
+              <tr>
+                <th>Event Title</th>
+                <th>Proposed By</th>
+                <th>Category & Scope</th>
+                <th>Venue & Schedule</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="pendingEventsTbody">
+              <tr><td colspan="5" style="text-align: center; color: #797e93; padding: 24px;">Checking for pending event proposals...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. ORGANISER VIEW -->
+    <div id="organiserDashboardView" class="d-none">
+      <div id="orgVerificationBanner" class="panel-card" style="padding: 16px 24px; margin-bottom: 24px;"></div>
+
+      <div class="panel-card" style="padding: 20px 28px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h2 style="font-size: 18px; font-weight: 800; color: #171530;">Event Management</h2>
+          <p style="color: #6a6f87; font-size: 13px;">Create new upcoming events or upload past festival albums.</p>
+        </div>
+        <div class="action-button-group">
+          <a href="create-event.html" id="btnAddUpcoming" class="btn-primary-pill">+ Add Upcoming Event</a>
+          <button id="btnAddGallery" class="btn-secondary" onclick="openAddGalleryModal()" style="font-weight: 700; color: #4b36d6; background: #eeecfd;">+ Add Past Event Gallery</button>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h2 style="font-size: 18px; font-weight: 800; color: #171530;">Gate Ticket Verification</h2>
+        <p style="color: #6a6f87; font-size: 13px; margin-top: 4px;">Verify attendee digital passes at venue entry gates.</p>
+
+        <div class="scanner-box">
+          <input type="text" id="verifyTicketInput" class="scanner-input" placeholder="e.g. DAZZ-839449" maxlength="15">
+          <button class="btn-primary-pill" onclick="verifyGatePass()" style="padding: 11px 22px;">Verify Pass</button>
+        </div>
+
+        <div id="verifyResult" style="margin-top: 14px;" class="d-none"></div>
+      </div>
+
+      <div class="panel-card">
+        <h2 style="font-size: 18px; font-weight: 800; color: #171530;">My Hosted Upcoming Events</h2>
+        <p style="color: #6a6f87; font-size: 13px; margin-top: 2px;">Track approval state and attendee rosters.</p>
+
+        <div style="overflow-x: auto;">
+          <table class="org-table">
+            <thead>
+              <tr>
+                <th>Event Title</th>
+                <th>Status</th>
+                <th>Category</th>
+                <th>Date & Venue</th>
+                <th>Registrations</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="orgEventsTbody">
+              <tr><td colspan="6" style="text-align: center; color: #797e93; padding: 24px;">Loading hosted events...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h2 style="font-size: 18px; font-weight: 800; color: #171530;">My Published Past Event Galleries</h2>
+        <p style="color: #6a6f87; font-size: 13px; margin-top: 2px;">Manage photo archives displayed on the landing page.</p>
+
+        <div style="overflow-x: auto;">
+          <table class="org-table">
+            <thead>
+              <tr>
+                <th>Preview</th>
+                <th>Gallery Title</th>
+                <th>Event Date</th>
+                <th>Caption & Notes</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="orgGalleriesTbody">
+              <tr><td colspan="5" style="text-align: center; color: #797e93; padding: 24px;">Loading gallery albums...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. STUDENT VIEW -->
+    <div id="studentDashboardView" class="d-none">
+      <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">My Registered Event Passes</h2>
+      <div id="ticketsList" class="ticket-grid"></div>
+    </div>
+
+    <!-- Attendee Roster Modal -->
+    <div id="rosterModal" class="modal-overlay d-none">
+      <div class="modal-box" style="max-width: 800px;">
+        <div class="modal-header">
+          <h3 id="rosterModalTitle" class="modal-title">Participant Roster</h3>
+          <button class="modal-close-btn" onclick="closeModal('rosterModal')">&times;</button>
+        </div>
+        <div class="modal-body" id="rosterModalBody">
+          <p>Loading participants list...</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal('rosterModal')">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Past Gallery Modal -->
+    <div id="addGalleryModal" class="modal-overlay d-none">
+      <div class="modal-box" style="max-width: 560px;">
+        <div class="modal-header">
+          <h3 class="modal-title">Publish Past Event Gallery</h3>
+          <button class="modal-close-btn" onclick="closeModal('addGalleryModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div id="galleryAlert" class="alert-box d-none"></div>
+
+          <form id="addGalleryForm" onsubmit="submitPastGallery(event)">
+            <div style="margin-bottom: 12px;">
+              <label class="field-label">Gallery Title</label>
+              <input type="text" id="galTitle" class="form-input" placeholder="e.g. Annual Tech Symposium 2025" required>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+              <label class="field-label">Event Date</label>
+              <input type="date" id="galDate" class="form-input" required>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+              <label class="field-label">Brief Description</label>
+              <textarea id="galDesc" class="form-input" style="height: 60px;" placeholder="Highlights from the event..."></textarea>
+            </div>
+
+            <div style="margin-bottom: 14px;">
+              <label class="field-label">Photo Image URL</label>
+              <input type="url" id="galImageUrl" class="form-input" placeholder="https://images.unsplash.com/..." required>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+              <label class="field-label">Image Caption</label>
+              <input type="text" id="galCaption" class="form-input" placeholder="e.g. Final Hackathon Presentation Round">
+            </div>
+
+            <button type="submit" class="btn-create-account">Save & Publish to Gallery</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal('addGalleryModal')">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 DAZZ. All rights reserved.</p>
+  </footer>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

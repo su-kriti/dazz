@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAZZ - Discover College Events</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
+        <span class="brand-text">DAZZ</span>
+      </div>
+
+      <nav class="nav-links" id="mainNavLinks">
+        <a href="home.html" class="nav-item active">Home</a>
+        <a href="events.html" class="nav-item">Upcoming Events</a>
+        <a href="dashboard.html" class="nav-item" id="navDashboard" style="display: none;">Dashboard</a>
+      </nav>
+
+      <div class="nav-action" id="navAuthArea">
+        <button class="btn-primary-pill" onclick="openAuthModal('login')">Login / Sign Up</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="badge-pill">
+        Inter-College Events Directory
+      </div>
+      <h1 class="hero-title">Discover Events Across Colleges</h1>
+      <p class="hero-subtext">
+        A centralized platform to discover, verify, and register for collegiate academic conferences, technical hackathons, cultural festivals, and competitive meets.
+      </p>
+
+      <!-- Search Filter Capsule -->
+      <div class="filter-capsule">
+        <div class="filter-group">
+          <i class="fa-regular fa-compass filter-icon"></i>
+          <select id="citySelect" class="filter-select">
+            <option value="All cities" selected>All cities</option>
+            <option value="Delhi">Delhi</option>
+            <option value="Patna">Patna</option>
+            <option value="Hyderabad">Hyderabad</option>
+            <option value="Bengaluru">Bengaluru</option>
+            <option value="Mumbai">Mumbai</option>
+          </select>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <div class="filter-group">
+          <span class="date-label">From</span>
+          <input type="date" id="fromDateInput" class="filter-date">
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <div class="filter-group">
+          <span class="date-label">To</span>
+          <input type="date" id="toDateInput" class="filter-date">
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <div class="filter-group">
+          <i class="fa-solid fa-layer-group filter-icon"></i>
+          <select id="categorySelect" class="filter-select">
+            <option value="All categories" selected>All categories</option>
+            <option value="Technical">Technical</option>
+            <option value="Cultural">Cultural</option>
+            <option value="Sports">Sports</option>
+            <option value="Workshop">Workshop</option>
+            <option value="Hackathon">Hackathon</option>
+          </select>
+        </div>
+
+        <button id="searchBtn" class="filter-search-btn" onclick="fetchEvents()">Search</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Container -->
+  <main class="page-container">
+
+    <!-- Section 1: Upcoming Events -->
+    <section class="section-block">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Upcoming events</h2>
+          <p class="section-subtitle">Open for registration right now.</p>
+        </div>
+        <div class="carousel-nav">
+          <a href="events.html" class="btn-view-all" style="text-decoration: none;">View all</a>
+          <button class="nav-circle-btn" onclick="scrollCarousel('upcomingCarousel', -320)"><i class="fa-solid fa-chevron-left"></i></button>
+          <button class="nav-circle-btn" onclick="scrollCarousel('upcomingCarousel', 320)"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+      </div>
+
+      <div id="upcomingCarousel" class="horizontal-scroll-container">
+        <!-- Injected via script.js -->
+      </div>
+    </section>
+
+    <!-- Section 2: Past Events (Dynamic from MySQL) -->
+    <section class="section-block">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Past events</h2>
+          <p class="section-subtitle">Photos and highlights shared by coordinators after event conclusion.</p>
+        </div>
+      </div>
+
+      <div class="cards-grid grid-4" id="pastEventsGrid">
+        <!-- Dynamic Past Galleries populated by fetchPastGalleries() -->
+      </div>
+    </section>
+
+    <!-- Section 3: Browse by Category -->
+    <section class="section-block">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Browse by category</h2>
+          <p class="section-subtitle">Select a category to explore upcoming events.</p>
+        </div>
+        <div class="carousel-nav">
+          <button class="nav-circle-btn" onclick="scrollCarousel('categoryCarousel', -280)"><i class="fa-solid fa-chevron-left"></i></button>
+          <button class="nav-circle-btn" onclick="scrollCarousel('categoryCarousel', 280)"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+      </div>
+
+      <div id="categoryCarousel" class="horizontal-scroll-container">
+        <div class="category-card" onclick="navigateToCategory('Technical')">
+          <div class="category-icon cat-blue"><i class="fa-solid fa-terminal"></i></div>
+          <h4 class="category-name">Technical</h4>
+          <p class="category-desc">Coding, systems engineering, and hardware trials</p>
+          <span class="category-count" id="count-Technical">Upcoming</span>
+        </div>
+
+        <div class="category-card" onclick="navigateToCategory('Cultural')">
+          <div class="category-icon cat-pink"><i class="fa-solid fa-music"></i></div>
+          <h4 class="category-name">Cultural</h4>
+          <p class="category-desc">Performing arts, fine arts, and literary events</p>
+          <span class="category-count" id="count-Cultural">Upcoming</span>
+        </div>
+
+        <div class="category-card" onclick="navigateToCategory('Sports')">
+          <div class="category-icon cat-green"><i class="fa-solid fa-award"></i></div>
+          <h4 class="category-name">Sports</h4>
+          <p class="category-desc">Track, court, and inter-collegiate athletic tournaments</p>
+          <span class="category-count" id="count-Sports">Upcoming</span>
+        </div>
+
+        <div class="category-card" onclick="navigateToCategory('Workshop')">
+          <div class="category-icon cat-orange"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+          <h4 class="category-name">Workshop</h4>
+          <p class="category-desc">Hands-on practical development labs</p>
+          <span class="category-count" id="count-Workshop">Upcoming</span>
+        </div>
+
+        <div class="category-card" onclick="navigateToCategory('Hackathon')">
+          <div class="category-icon cat-teal"><i class="fa-solid fa-code"></i></div>
+          <h4 class="category-name">Hackathon</h4>
+          <p class="category-desc">Time-constrained software prototype builds</p>
+          <span class="category-count" id="count-Hackathon">Upcoming</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: Sign In (Default upon clicking Login / Sign Up) -->
+  <div id="loginModal" class="modal-overlay d-none">
+    <div class="account-modal-box" style="max-width: 440px;">
+      <div class="account-modal-header">
+        <h2 class="account-modal-title">Sign in to DAZZ</h2>
+        <button class="account-close-btn" onclick="closeModal('loginModal')">&times;</button>
+      </div>
+
+      <div class="persona-info-text">
+        <i class="fa-regular fa-circle-info"></i> Access your dashboard, digital passes, or hosted events.
+      </div>
+
+      <div id="loginAlert" class="alert-box d-none"></div>
+
+      <form id="loginForm" onsubmit="submitLogin(event)">
+        <div style="margin-bottom: 16px;">
+          <label class="field-label">Institutional / registered email</label>
+          <div class="input-icon-wrapper">
+            <i class="fa-regular fa-envelope field-icon"></i>
+            <input type="email" id="loginEmail" class="account-input" placeholder="name@domain.edu" required>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <label class="field-label">Password</label>
+          <div class="input-icon-wrapper">
+            <i class="fa-regular fa-lock field-icon"></i>
+            <input type="password" id="loginPassword" class="account-input" placeholder="••••••••" required>
+            <i class="fa-regular fa-eye field-icon-right" onclick="togglePasswordVisibility('loginPassword')"></i>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-create-account">Sign In</button>
+      </form>
+
+      <div class="account-modal-footer">
+        Do not have an account? <a href="javascript:void(0)" onclick="switchModal('loginModal', 'signupModal')">Create account</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Sign Up -->
+  <div id="signupModal" class="modal-overlay d-none">
+    <div class="account-modal-box">
+      <div class="account-modal-header">
+        <h2 class="account-modal-title">Create your DAZZ account</h2>
+        <button class="account-close-btn" onclick="closeModal('signupModal')">&times;</button>
+      </div>
+
+      <div class="persona-tab-container">
+        <button type="button" class="persona-tab active" id="tab-student" onclick="setRoleTab('Student')">
+          <i class="fa-solid fa-user-graduate"></i> Student
+        </button>
+        <button type="button" class="persona-tab" id="tab-organiser" onclick="setRoleTab('Organiser')">
+          <i class="fa-solid fa-bullhorn"></i> Organiser
+        </button>
+        <button type="button" class="persona-tab" id="tab-admin" onclick="setRoleTab('Admin')">
+          <i class="fa-solid fa-shield-halved"></i> Institution Admin
+        </button>
+      </div>
+
+      <div class="persona-info-text" id="roleInfoText">
+        <i class="fa-regular fa-circle-info"></i> Register for events and receive digital access tickets.
+      </div>
+
+      <div id="signupAlert" class="alert-box d-none"></div>
+
+      <form id="signupForm" onsubmit="submitSignup(event)">
+        <input type="hidden" id="selectedRole" value="Student">
+
+        <div class="form-grid-2">
+          <div>
+            <label class="field-label" id="labelName">Full name</label>
+            <div class="input-icon-wrapper">
+              <i class="fa-regular fa-user field-icon"></i>
+              <input type="text" id="regName" class="account-input" placeholder="Full name" required>
+            </div>
+          </div>
+
+          <div>
+            <label class="field-label" id="labelEmail">Email address</label>
+            <div class="input-icon-wrapper">
+              <i class="fa-regular fa-envelope field-icon"></i>
+              <input type="email" id="regEmail" class="account-input" placeholder="name@domain.edu" required>
+            </div>
+          </div>
+
+          <div>
+            <label class="field-label">Password</label>
+            <div class="input-icon-wrapper">
+              <i class="fa-regular fa-lock field-icon"></i>
+              <input type="password" id="regPassword" class="account-input" placeholder="••••••••" required>
+              <i class="fa-regular fa-eye field-icon-right" onclick="togglePasswordVisibility('regPassword')"></i>
+            </div>
+          </div>
+
+          <div>
+            <label class="field-label" id="labelPhone">Phone number (optional)</label>
+            <div class="input-icon-wrapper">
+              <i class="fa-regular fa-phone field-icon"></i>
+              <input type="text" id="regPhone" class="account-input" placeholder="Contact number">
+            </div>
+          </div>
+
+          <div>
+            <label class="field-label">Institution</label>
+            <div class="input-icon-wrapper">
+              <i class="fa-regular fa-building-columns field-icon"></i>
+              <select id="regInstitution" class="account-select" required>
+                <option value="" disabled selected>Select</option>
+                <option value="1">South Asian University, Delhi</option>
+                <option value="2">Indian Institute of Technology Delhi</option>
+                <option value="3">Patna University</option>
+                <option value="4">University of Hyderabad</option>
+                <option value="5">Bengaluru Institute of Technology</option>
+                <option value="6">Mumbai College of Arts</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Dynamic Field 1 (Degree for Student / Club for Organiser / Hidden for Admin) -->
+          <div id="groupField1">
+            <label class="field-label" id="labelField1">Degree / course</label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-graduation-cap field-icon" id="iconField1"></i>
+              <input type="text" id="regField1" class="account-input" placeholder="e.g., MCA, B.Tech">
+            </div>
+          </div>
+
+          <!-- Dynamic Field 2 (Roll Number for Student / Designation for Organiser & Admin) -->
+          <div id="groupField2">
+            <label class="field-label" id="labelField2">Roll number</label>
+            <div class="input-icon-wrapper">
+              <i class="fa-regular fa-id-badge field-icon" id="iconField2"></i>
+              <input type="text" id="regField2" class="account-input" placeholder="e.g., 2026-CS-014">
+            </div>
+          </div>
+
+          <!-- Dynamic Field 3 (Year for Student only) -->
+          <div id="groupField3">
+            <label class="field-label" id="labelField3">Current year</label>
+            <div class="input-icon-wrapper">
+              <i class="fa-regular fa-calendar-days field-icon" id="iconField3"></i>
+              <select id="regField3" class="account-select">
+                <option value="" disabled selected>Select</option>
+                <option value="1st Year">1st Year</option>
+                <option value="2nd Year">2nd Year</option>
+                <option value="3rd Year">3rd Year</option>
+                <option value="4th Year">4th Year</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-create-account">Create account</button>
+      </form>
+
+      <div class="account-modal-footer">
+        Already have an account? <a href="javascript:void(0)" onclick="switchModal('signupModal', 'loginModal')">Log in</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: View Event Details -->
+  <div id="detailsModal" class="modal-overlay d-none">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalEventTitle" class="modal-title">Event Details</h3>
+        <button class="modal-close-btn" onclick="closeModal('detailsModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="modalEventBody">
+        <p>Loading event record...</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('detailsModal')">Close</button>
+        <button id="modalRegisterBtn" class="btn-primary-pill">Proceed to Register</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Event Gallery Lightbox -->
+  <div id="galleryModal" class="modal-overlay d-none">
+    <div class="modal-box" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 id="galleryModalTitle" class="modal-title">Event Gallery</h3>
+        <button class="modal-close-btn" onclick="closeModal('galleryModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="galleryModalBody">
+        <p>Loading photo records from database...</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('galleryModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Registration Form -->
+  <div id="registerModal" class="modal-overlay d-none">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="regModalTitle" class="modal-title">Register for Event</h3>
+        <button class="modal-close-btn" onclick="closeModal('registerModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="regEventId">
+        <input type="hidden" id="regEventMode">
+
+        <div id="teamNameGroup" class="form-group d-none" style="margin-bottom: 12px;">
+          <label style="color: #333; font-weight: 600; font-size: 13px;">Team Name</label>
+          <input type="text" id="regTeamName" class="form-input" placeholder="Registered team title">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="color: #333; font-weight: 600; font-size: 13px;">Primary Registrant</label>
+          <input type="text" id="regStudentName" class="form-input" readonly>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="color: #333; font-weight: 600; font-size: 13px;">Institutional Email</label>
+          <input type="email" id="regStudentEmail" class="form-input" readonly>
+        </div>
+
+        <div id="regAlert" class="alert-box d-none"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('registerModal')">Cancel</button>
+        <button class="btn-primary-pill" onclick="submitRegistration()">Confirm Registration</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2026 DAZZ. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAZZ - All Upcoming Events</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .catalog-header {
+      padding: 40px 24px 20px 24px;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+    .catalog-controls {
+      background: #ffffff;
+      padding: 16px 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+    .catalog-filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .catalog-select, .catalog-input {
+      padding: 9px 14px;
+      border: 1px solid #dcdfe8;
+      border-radius: 8px;
+      font-size: 13.5px;
+      color: #2b3044;
+      background: #f8f9fd;
+      outline: none;
+    }
+    .grid-catalog {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      padding-bottom: 60px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="home.html" class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
+        <span class="brand-text">DAZZ</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="home.html" class="nav-item">Home</a>
+        <a href="events.html" class="nav-item active">Upcoming Events</a>
+        <a href="dashboard.html" class="nav-item" id="navDashboard" style="display: none;">Dashboard</a>
+      </nav>
+
+      <div class="nav-action" id="navAuthArea">
+        <a href="home.html" class="btn-primary-pill">Home</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="catalog-header">
+    <h1 style="font-size: 32px; font-weight: 800; margin-bottom: 8px;">Explore All Upcoming Events</h1>
+    <p style="color: #c9c4eb; font-size: 15px; margin-bottom: 24px;">Discover verified collegiate hackathons, competitions, workshops, and fests across institutions.</p>
+
+    <!-- Catalog Control Bar -->
+    <div class="catalog-controls">
+      <div class="catalog-filter-group">
+        <select id="catalogCity" class="catalog-select" onchange="loadCatalogEvents()">
+          <option value="All cities" selected>All cities</option>
+          <option value="Delhi">Delhi</option>
+          <option value="Patna">Patna</option>
+          <option value="Hyderabad">Hyderabad</option>
+          <option value="Bengaluru">Bengaluru</option>
+          <option value="Mumbai">Mumbai</option>
+        </select>
+
+        <select id="catalogCategory" class="catalog-select" onchange="loadCatalogEvents()">
+          <option value="All categories" selected>All categories</option>
+          <option value="Technical">Technical</option>
+          <option value="Cultural">Cultural</option>
+          <option value="Sports">Sports</option>
+          <option value="Workshop">Workshop</option>
+          <option value="Hackathon">Hackathon</option>
+        </select>
+
+        <select id="catalogMode" class="catalog-select" onchange="loadCatalogEvents()">
+          <option value="All" selected>Solo & Team</option>
+          <option value="Solo">Solo Only</option>
+          <option value="Team">Team Only</option>
+        </select>
+      </div>
+
+      <div class="catalog-filter-group">
+        <input type="text" id="catalogSearch" class="catalog-input" placeholder="Search by event title..." oninput="filterLocalCatalog()">
+        <button class="btn-secondary" onclick="resetCatalogFilters()">Reset</button>
+      </div>
+    </div>
+
+    <!-- Events Grid -->
+    <div id="catalogGrid" class="grid-catalog">
+      <!-- Injected via events.js -->
+    </div>
+  </div>
+
+  <!-- MODAL: View Event Details -->
+  <div id="detailsModal" class="modal-overlay d-none">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalEventTitle" class="modal-title">Event Details</h3>
+        <button class="modal-close-btn" onclick="closeModal('detailsModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="modalEventBody">
+        <p>Loading event record...</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('detailsModal')">Close</button>
+        <button id="modalRegisterBtn" class="btn-primary-pill">Proceed to Register</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Registration Form -->
+  <div id="registerModal" class="modal-overlay d-none">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="regModalTitle" class="modal-title">Register for Event</h3>
+        <button class="modal-close-btn" onclick="closeModal('registerModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="regEventId">
+        <input type="hidden" id="regEventMode">
+
+        <div id="teamNameGroup" class="form-group d-none" style="margin-bottom: 12px;">
+          <label style="color: #333; font-weight: 600; font-size: 13px;">Team Name</label>
+          <input type="text" id="regTeamName" class="form-input" placeholder="Registered team title">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="color: #333; font-weight: 600; font-size: 13px;">Primary Registrant</label>
+          <input type="text" id="regStudentName" class="form-input" readonly>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="color: #333; font-weight: 600; font-size: 13px;">Institutional Email</label>
+          <input type="email" id="regStudentEmail" class="form-input" readonly>
+        </div>
+
+        <div id="regAlert" class="alert-box d-none"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('registerModal')">Cancel</button>
+        <button class="btn-primary-pill" onclick="submitRegistration()">Confirm Registration</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>© 2026 DAZZ. All rights reserved.</p>
+  </footer>
+
+  <script src="events.js"></script>
+</body>
+</html>
